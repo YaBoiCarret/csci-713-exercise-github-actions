@@ -12,9 +12,13 @@ public class StudentService {
         students.add(s);
     }
 
-    // Bug: returns first student if list is empty
+    // Reverted bug
     public Student getTopStudent() {
-        Student top = students.get(0);  // Potential IndexOutOfBoundsException
+        if (students.isEmpty()) {
+            return null;
+        }
+
+        Student top = students.get(0);
         for (Student s : students) {
             if (s.getGpa() > top.getGpa()) {
                 top = s;
@@ -23,25 +27,23 @@ public class StudentService {
         return top;
     }
 
-    // Code smell: duplicated logic in loop
     public double calculateAverageGpa() {
         double total = 0.0;
         for (Student s : students) {
             total += s.getGpa();
         }
-        if (students.size() > 0) {
+        if (!students.isEmpty()) {
             return total / students.size();
         } else {
             return 0.0;
         }
     }
 
-    // Unused method (code smell)
+    // Reverted bug
     public void removeStudentByName(String name) {
-        for (Student s : students) {
-            if (s.getName().equals(name)) {
-                students.remove(s);  // Bug: ConcurrentModificationException possible
-            }
+        if (name == null) {
+            return;
         }
+        students.removeIf(s -> name.equals(s.getName()));
     }
 }
